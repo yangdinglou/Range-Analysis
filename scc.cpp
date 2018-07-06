@@ -29,7 +29,7 @@ set<int> essa(Func &func)
                     tmp = stof(func.container[tmpid].op2);
                     auto tmpstr = func.container[tmpid].op1;
                     auto loc = tmpstr.find('_');
-                    auto symbol = tmpstr.substr(0, loc);
+					auto symbol = loc == 0 ? tmpstr : tmpstr.substr(0, loc);
                     string tp;
                     auto findtp = func.decltbl.find(symbol);
                     if (findtp != func.decltbl.end()) {
@@ -71,7 +71,7 @@ set<int> essa(Func &func)
                     auto tmpblk = func.container[tmpid];
                     auto tmpstr1=tmpblk.op1,tmpstr2=tmpblk.op2;
                     auto loc1 = tmpstr1.find('_');
-                    auto symbol = tmpstr1.substr(0, loc1);
+					auto symbol = loc1 == 0 ? tmpstr1 : tmpstr1.substr(0, loc1);
                     string tp;
                     auto findtp = func.decltbl.find(symbol);
                     if (findtp != func.decltbl.end()) {
@@ -154,6 +154,7 @@ scc::scc(Func &func) {
             symbol.push_back(j.name);
             symbolid.insert(make_pair(j.name,id));
             ++id;
+			j.print();
             summary.push_back(j);
         }
     }
