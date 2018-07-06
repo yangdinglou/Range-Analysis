@@ -28,7 +28,7 @@ Parser(istream &cin) {
         ss >> label;
         if (label[0] == ';')continue;
         if (label=="foo"||label=="bar") {
-            Infunc == true;
+            Infunc = true;
             tmpfunc = Func(label);
             char c;
             while (c = ss.get()) {
@@ -103,7 +103,6 @@ Parser(istream &cin) {
             }
             else if (label == "#") {
                 string name, op1, op2;
-                int f1, f2;
                 ss >> name;
                 int flag = 0;
                 char tmpch;
