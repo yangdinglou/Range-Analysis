@@ -5,10 +5,12 @@
 #include "Func.h"
 
 
-Block::Block() = default;
+Block::Block(){
+    id=0;
+}
 
-Block::Block(int _id, bool ret = false) : {
-    if (ret) id = -1;
+Block::Block(int _id, bool ret) {
+    if (ret) id = 1;
     else {
         id = _id;
     }

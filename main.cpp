@@ -1,6 +1,6 @@
 #include <iostream>
-#include "Func.h"
-#include "section.h"
+#include "Parser.h"
+#include "scc.h"
 
 using namespace std;
 
@@ -21,6 +21,7 @@ public:
 
 
 int main() {
-    cout << FLT_MAX;
+    auto tmp=Parser(cin);
+    scc test(tmp[0]);
     return 0;
 }

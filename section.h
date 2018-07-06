@@ -12,17 +12,163 @@
 
 using namespace std;
 
-template<typename T>
-class section {
+static float add(float a, float b) {
 
-    T l, r;
-    T inf;
+    if (FLT_MAX - max(a, b) < min(a, b))
+        return FLT_MAX;
+    else
+        return a + b;
+
+}
+
+
+static float multi(float a, float b) {
+    if (max(a, b) == 0)return 0;
+
+    if (FLT_MAX / max(a, b) < min(a, b))
+        return FLT_MAX;
+    else
+        return a * b;
+
+}
+
+static float divi(float a, float b) {
+    return a / b;
+}
+
+class section {
+    float l, r;
+    float inf;
 public:
-    section(T l_, T r_) : l(l_), r(r_) {
-        if (is_integral<T>::value) {
-            inf = INT_MAX;
-        } else {
-            inf = FLT_MAX;
+    void print()
+    {
+        cout<<"{"<<l<<" , "<<r<<"}"<<endl;
+    }
+    section() = default;
+
+    section(float num) : l(num), r(num) {
+        inf = FLT_MAX;
+    }
+
+    section(float l_, float r_) : l(l_), r(r_) {
+        inf = FLT_MAX;
+    }
+
+    section(string op1, string op, float num, string tp, bool judge) {
+        inf = FLT_MAX;
+        if (tp == "int") {
+            if (op == "<") {
+                switch (judge) {
+                    case true://op1t
+                    {
+                        l = -inf;
+                        r = num - 1;
+                        break;
+                    }
+                    case false://op1f
+                    {
+                        l = num;
+                        r = inf;
+                        break;
+                    }
+                }
+            } else if (op == "<=") {
+                switch (judge) {
+                    case true://op1t
+                    {
+                        l = -inf;
+                        r = num;
+                        break;
+                    }
+                    case false://op1f
+                    {
+                        l = num + 1;
+                        r = inf;
+                        break;
+                    }
+                }
+            }else if(op=="=="){
+                switch (judge)
+                {
+                    case true://op1t
+                    {
+                        l=num;
+                        r=num;
+                        break;
+                    }
+                    case false://op1f
+                    {
+                        l=-inf;
+                        r=inf;
+                        break;
+                    }
+                }
+            } else{
+                switch (judge)
+                {
+                    case false://op1f
+                    {
+                        l=num;
+                        r=num;
+                        break;
+                    }
+                    case true://op1t
+                    {
+                        l=-inf;
+                        r=inf;
+                        break;
+                    }
+                }
+            }
+        } else{
+            if (op == "<="||op=="<") {
+                switch (judge) {
+                    case true://op1t
+                    {
+                        l = -inf;
+                        r = num;
+                        break;
+                    }
+                    case false://op1f
+                    {
+                        l = num;
+                        r = inf;
+                        break;
+                    }
+                }
+            }else if(op=="=="){
+                switch (judge)
+                {
+                    case true://op1t
+                    {
+                        l=num;
+                        r=num;
+                        break;
+                    }
+                    case false://op1f
+                    {
+                        l=-inf;
+                        r=inf;
+                        break;
+                    }
+                }
+            } else{
+                switch (judge)
+                {
+                    case false://op1f
+                    {
+                        l=num;
+                        r=num;
+                        break;
+                    }
+                    case true://op1t
+                    {
+                        l=-inf;
+                        r=inf;
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -35,20 +181,22 @@ public:
     }
 
     friend section operator-(const section &s1, const section &s2) {
-        return section(minus(s1.l, s2.r), minus(s1.r, s2.l));
+        return section(add(s1.l, -s2.r), add(s1.r, -s2.l));
     }
 
     friend section operator*(const section &s1, const section &s2) {
-        set<decltype(s1.l)> tmp;
+        set<float> tmp;
         tmp.insert(multi(s1.l, s2.l));
         tmp.insert(multi(s1.l, s2.r));
         tmp.insert(multi(s1.r, s2.l));
         tmp.insert(multi(s1.r, s2.r));
-        return section(*(tmp.begin()));
+        return section(*(tmp.begin()), *(tmp.rbegin()));
     }
-    friend section operator/(const section &s1, const section &s2){
-        return s1*section((T)1/s2.l,(T)1/s2.r);
+
+    friend section operator/(const section &s1, const section &s2) {
+        return s1 * section((float) 1 / s2.l, (float) 1 / s2.r);
     }
+
     friend section uni(const section &s1, const section &s2) {
         return section(max(s1.l, s2.l), min(s1.r, s2.r));
     }
@@ -57,53 +205,12 @@ public:
         return section(min(s1.l, s2.l), max(s1.r, s2.r));
     }
 
-    section multiadd(T a, T b) {
-        int x1 = add(b, multi(a, l));
-        int x2 = add(b, multi(a, r));
+    section multiadd(float a, float b) {
+        float x1 = add(b, multi(a, l));
+        float x2 = add(b, multi(a, r));
         return section(min(x1, x2), max(x1, x2));
     }
 };
-
-template<typename T>
-T add(T a, T b) {
-    if (is_integral<T>::value) {
-        if (INT_MAX - max(a, b) < min(a, b))
-            return INT_MAX;
-        else
-            return a + b;
-    } else {
-        if (FLT_MAX - max(a, b) < min(a, b))
-            return FLT_MAX;
-        else
-            return a + b;
-    }
-}
-
-template<typename T>
-T minus(T a, T b) {
-    return add(a, -b);
-}
-
-template<typename T>
-T multi(T a, T b) {
-    if (max(a, b) == 0)return 0;
-    if (is_integral<T>::value) {
-        if (INT_MAX / max(a, b) < min(a, b))
-            return INT_MAX;
-        else
-            return a * b;
-    } else {
-        if (FLT_MAX / max(a, b) < min(a, b))
-            return FLT_MAX;
-        else
-            return a * b;
-    }
-}
-
-template<typename T>
-T divi(T a, T b) {
-    return a / b;
-}
 
 
 #endif //PROJECT_SECTION_H
